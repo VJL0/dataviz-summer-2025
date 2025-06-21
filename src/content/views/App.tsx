@@ -1,4 +1,3 @@
-import Logo from "@/assets/crx.svg";
 import { useState } from "react";
 
 function App() {
@@ -9,11 +8,10 @@ function App() {
     <div className="popup-container">
       {show && (
         <div className={`popup-content ${show ? "opacity-100" : "opacity-0"}`}>
-          <h1>HELLO CRXJS, itcftvgybhus me </h1>
+          <h1 className="text-red-500">HELLO CRXJS, it me </h1>
         </div>
       )}
       <button className="toggle-button" onClick={toggle}>
-        <img src={Logo} alt="CRXJS logo" className="button-icon" />
       </button>
     </div>
   );
