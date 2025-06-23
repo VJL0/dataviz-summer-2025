@@ -2,39 +2,39 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 
-// Raw CSS imports
-import "./tailwind.css";
-import tailwindStyles from "./tailwind.css?inline";
-// import propertyDefinitions from "./property.css?raw";
-import customStyles from "./app.css?raw";
+// CSS Imports
+import tailwindStyles from "./tailwind.css?inline"; // full Tailwind + @property defs
+import customStyles from "./app.css?raw"; // your local overrides
 
-// Create root host container
+// Split Tailwind into “core” + “@property” sections
+const firstPropertyIndex = tailwindStyles.indexOf("@property");
+const coreTailwindCSS = tailwindStyles.slice(0, firstPropertyIndex);
+const propertyDefinitions = tailwindStyles.slice(firstPropertyIndex);
+
+// Inject global @property defs into document <head>
+const globalPropertyStyle = document.createElement("style");
+globalPropertyStyle.textContent = propertyDefinitions;
+document.head.appendChild(globalPropertyStyle);
+
+// Set up host container + Shadow DOM
 const container = document.createElement("div");
 container.id = "dataviz-host";
+document.documentElement.appendChild(container);
 
-// Inject @property definitions globally (required for Tailwind v4)
-// const globalPropertyStyle = document.createElement("style");
-// globalPropertyStyle.textContent = propertyDefinitions;
-// document.head.appendChild(globalPropertyStyle);
-
-// Create Shadow DOM
 const shadowRoot = container.attachShadow({ mode: "open" });
 
-// Create and apply constructable stylesheets
+// Create constructable stylesheets for Shadow DOM
 const tailwindSheet = new CSSStyleSheet();
-tailwindSheet.replaceSync(tailwindStyles);
+tailwindSheet.replaceSync(coreTailwindCSS);
 
 const customSheet = new CSSStyleSheet();
 customSheet.replaceSync(customStyles);
 
 shadowRoot.adoptedStyleSheets = [tailwindSheet, customSheet];
 
-// Mount React app inside Shadow DOM
+// Mount React app into Shadow DOM
 createRoot(shadowRoot).render(
   <StrictMode>
     <App />
   </StrictMode>,
 );
-
-// Attach container to document
-document.documentElement.appendChild(container);
