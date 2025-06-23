@@ -1,26 +1,38 @@
 import { Message } from "./types";
+import { processSVGs } from "@/content/scripts/ChartDetector";
 
 chrome.action.onClicked.addListener((tab) => {
-  if (typeof tab.id === "number") {
-    chrome.tabs.sendMessage(tab.id, { type: "PROCESS_SVGS" });
-  }
+  if (typeof tab.id !== "number") return;
+
+  chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: processSVGs,
+  });
 });
+
+// console.log("Background script loaded");
+// chrome.action.onClicked.addListener((tab) => {
+//   console.log("Action button clicked");
+//   if (typeof tab.id !== "number") return;
+//   console.log("Sending message to process SVGs");
+//   chrome.tabs.sendMessage(tab.id, { type: "PROCESS_SVGS" });
+// });
 
 function handleMessage(message: Message): Promise<any> {
   switch (message.type) {
     case "FETCH_CURRICULUM":
-      return postJSON("http://localhost:8000/api/analyze-graph", {
+      return postJSON("api/analyze-graph", {
         svgHTML: message.payload.svgHTML,
       });
 
     case "FETCH_SVG":
-      return postJSON("http://localhost:8000/api/update-svg", {
+      return postJSON("api/update-svg", {
         svgHTML: message.payload.svgHTML,
         topic: message.payload.topic,
       });
 
     case "FETCH_ANSWER":
-      return postJSON("http://localhost:8000/api/ask-question", {
+      return postJSON("api/ask-question", {
         question: message.payload.question,
         topic: message.payload.topic,
       });
@@ -31,7 +43,7 @@ function handleMessage(message: Message): Promise<any> {
 }
 
 async function postJSON(url: string, data: any) {
-  const response = await fetch(url, {
+  const response = await fetch(`http://localhost:8000/${url}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
@@ -40,7 +52,7 @@ async function postJSON(url: string, data: any) {
   return response.json();
 }
 
-chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   handleMessage(message)
     .then(sendResponse)
     .catch((err) => {

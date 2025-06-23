@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
 type Status = {
   message: string;
   isError: boolean;
 } | null;
 
-const App: React.FC = () => {
+const Login: React.FC = () => {
   const [id, setId] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [status, setStatus] = useState<Status>(null);
@@ -51,14 +51,16 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex w-80 flex-col justify-center p-6">
+    <div className="relative right-2 flex w-80 flex-col justify-center rounded-2xl border bg-white p-6">
       <h2 className="text-center text-2xl font-bold text-gray-900">
         Survey Login
       </h2>
 
       <div className="my-3 h-4">
         {status && (
-          <p className={status.isError ? "text-red-500" : "text-green-500"}>
+          <p
+            className={`text-sm ${status.isError ? "text-red-500" : "text-green-500"}`}
+          >
             {status.message}
           </p>
         )}
@@ -117,4 +119,4 @@ const App: React.FC = () => {
   );
 };
 
-export default App;
+export default Login;

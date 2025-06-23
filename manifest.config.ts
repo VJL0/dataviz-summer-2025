@@ -12,15 +12,14 @@ export default defineManifest({
     default_icon: {
       48: "public/logo.png",
     },
-    default_popup: "src/popup/index.html",
   },
-  permissions: ["storage"],
+  permissions: ["scripting", "storage", "tabs"],
   background: {
     service_worker: "src/background.ts",
   },
   content_scripts: [
     {
-      js: ["src/content/main.tsx"],
+      js: ["src/content/main.tsx", "src/content/scripts/ChartDetector.ts"],
       matches: ["https://*/*"],
     },
   ],
