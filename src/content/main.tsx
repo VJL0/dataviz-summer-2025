@@ -7,25 +7,22 @@ import tailwindStyles from "./tailwind.css?inline"; // full Tailwind + @property
 import customStyles from "./app.css?raw"; // your local overrides
 
 // Split Tailwind into “core” + “@property” sections
-const firstPropertyIndex = tailwindStyles.indexOf("@property");
-const coreTailwindCSS = tailwindStyles.slice(0, firstPropertyIndex);
-const propertyDefinitions = tailwindStyles.slice(firstPropertyIndex);
+const propertyIndex = tailwindStyles.indexOf("@property");
 
 // Inject global @property defs into document <head>
-const globalPropertyStyle = document.createElement("style");
-globalPropertyStyle.textContent = propertyDefinitions;
-document.head.appendChild(globalPropertyStyle);
+const globalStyles = document.createElement("style");
+globalStyles.textContent = tailwindStyles.slice(propertyIndex);
+document.head.appendChild(globalStyles);
 
 // Set up host container + Shadow DOM
 const container = document.createElement("div");
 container.id = "dataviz-host";
 document.documentElement.appendChild(container);
-
 const shadowRoot = container.attachShadow({ mode: "open" });
 
 // Create constructable stylesheets for Shadow DOM
 const tailwindSheet = new CSSStyleSheet();
-tailwindSheet.replaceSync(coreTailwindCSS);
+tailwindSheet.replaceSync(tailwindStyles.slice(0, propertyIndex));
 
 const customSheet = new CSSStyleSheet();
 customSheet.replaceSync(customStyles);

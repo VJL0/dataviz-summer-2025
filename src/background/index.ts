@@ -1,8 +1,10 @@
-import { Message } from "./types";
+import { Message } from "../types";
 import { processSVGs } from "@/content/scripts/ChartDetector";
 
 chrome.action.onClicked.addListener((tab) => {
   if (typeof tab.id !== "number") return;
+
+  console.log("Action button clicked, processing SVGs in tab:", tab.id);
 
   chrome.scripting.executeScript({
     target: { tabId: tab.id },

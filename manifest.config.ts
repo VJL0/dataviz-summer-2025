@@ -13,6 +13,7 @@ export default defineManifest({
       48: "public/logo.png",
     },
   },
+  host_permissions: ["*://*/*"],
   permissions: ["scripting", "storage", "tabs"],
   background: {
     service_worker: "src/background.ts",
