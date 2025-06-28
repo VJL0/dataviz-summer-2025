@@ -6,22 +6,28 @@ export default defineManifest({
   name: pkg.name,
   version: pkg.version,
   icons: {
-    48: "public/logo.png",
+    16: "icon-16.png",
+    32: "icon-32.png",
+    48: "icon-48.png",
+    128: "icon-128.png",
   },
   action: {
+    default_title: "Click to process Charts",
     default_icon: {
-      48: "public/logo.png",
+      16: "icon-16.png",
+      32: "icon-32.png",
     },
   },
-  host_permissions: ["*://*/*"],
   permissions: ["scripting", "storage", "tabs"],
+  host_permissions: ["<all_urls>"],
   background: {
     service_worker: "src/background.ts",
+    type: "module",
   },
   content_scripts: [
     {
-      js: ["src/content/main.tsx", "src/content/scripts/ChartDetector.ts"],
-      matches: ["https://*/*"],
+      matches: ["<all_urls>"],
+      js: ["src/content/scripts/main.ts"],
     },
   ],
 });
