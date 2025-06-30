@@ -1,5 +1,5 @@
 // URL to our icon asset
-const iconPath: string = chrome.runtime.getURL("icons/icon-48.png");
+const iconPath: string = chrome.runtime.getURL("icon-48.png");
 
 function isGraph(svgElement: SVGSVGElement): boolean {
   // find any of these graphic tags
@@ -63,7 +63,7 @@ function createAndAttachIconButton(svgElement: SVGSVGElement): void {
   svgElement.parentElement?.appendChild(button);
 }
 
-export function processSVGs(): void {
+function processSVGs(): void {
   console.log("Processing SVGs...");
   document
     .querySelectorAll<SVGSVGElement>("svg:not([data-expert-graph-id])")

@@ -2,9 +2,13 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 
+// Content Script
+import "./scripts/chart-detector";
+import "./scripts/logic";
+
 // CSS Imports
-import tailwindStyles from "./tailwind.css?inline"; // full Tailwind + @property defs
-import customStyles from "./app.css?raw"; // your local overrides
+import tailwindStyles from "./styles/tailwind.css?inline"; // full Tailwind + @property defs
+import customStyles from "./styles/app.css?raw"; // your local overrides
 
 // Split Tailwind into “core” + “@property” sections
 const propertyIndex = tailwindStyles.indexOf("@property");

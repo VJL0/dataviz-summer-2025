@@ -1,24 +1,9 @@
 import { Message } from "../types";
-import { processSVGs } from "@/content/scripts/ChartDetector";
 
 chrome.action.onClicked.addListener((tab) => {
   if (typeof tab.id !== "number") return;
-
-  console.log("Action button clicked, processing SVGs in tab:", tab.id);
-
-  chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    func: processSVGs,
-  });
+  chrome.tabs.sendMessage(tab.id, { type: "PROCESS_SVGS" });
 });
-
-// console.log("Background script loaded");
-// chrome.action.onClicked.addListener((tab) => {
-//   console.log("Action button clicked");
-//   if (typeof tab.id !== "number") return;
-//   console.log("Sending message to process SVGs");
-//   chrome.tabs.sendMessage(tab.id, { type: "PROCESS_SVGS" });
-// });
 
 function handleMessage(message: Message): Promise<any> {
   switch (message.type) {
