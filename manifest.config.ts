@@ -19,14 +19,14 @@ export default defineManifest({
     },
   },
   permissions: ["scripting", "storage", "tabs"],
-  host_permissions: ["*://www.nytimes.com/*"],
+  host_permissions: ["*://*/*"],
   background: {
     service_worker: "src/background/main.ts",
     type: "module",
   },
   content_scripts: [
     {
-      matches: ["*://www.nytimes.com/*"],
+      matches: ["*://www.nytimes.com/*"], // ["*://*/*"],
       js: ["src/content/main.tsx"],
     },
   ],

@@ -1,4 +1,5 @@
 // URL to our icon asset
+import { handleChartIconClick } from "./logic";
 const iconPath: string = chrome.runtime.getURL("icon-48.png");
 
 function isGraph(svgElement: SVGSVGElement): boolean {
@@ -42,7 +43,7 @@ function createAndAttachIconButton(svgElement: SVGSVGElement): void {
     cursor: "pointer",
   });
 
-  button.onclick = (): void => {
+  button.onclick = () => {
     const rect = svgElement.getBoundingClientRect();
     const elementTopAbsolute = rect.top + window.pageYOffset;
     const offset = window.innerHeight * 0.2;
@@ -58,9 +59,11 @@ function createAndAttachIconButton(svgElement: SVGSVGElement): void {
     });
 
     iconButtonsState("disable");
+
+    handleChartIconClick(svgElement.dataset.expertGraphId!);
   };
 
-  svgElement.parentElement?.appendChild(button);
+  svgElement.parentElement!.appendChild(button);
 }
 
 function processSVGs(): void {

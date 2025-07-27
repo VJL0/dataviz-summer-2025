@@ -1,41 +1,51 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
+import { Provider } from "react-redux";
+import { store } from "./app/store";
 import App from "./App";
 
-// Content Script
-import "./scripts/chart-detector";
-import "./scripts/logic";
+import {
+  createShadowSheets,
+  injectPropertyStyles,
+} from "./styles/loadShadowStyles";
 
-// CSS Imports
-import tailwindStyles from "./styles/tailwind.css?inline"; // full Tailwind + @property defs
-import customStyles from "./styles/app.css?raw"; // your local overrides
+// Load light DOM styles globally
+import.meta.glob("./styles/light/*.css", { eager: true });
+injectPropertyStyles();
 
-// Split Tailwind into “core” + “@property” sections
-const propertyIndex = tailwindStyles.indexOf("@property");
+// Custom Element Definition
+class DataVisDecomposer extends HTMLElement {
+  private shadow: ShadowRoot;
 
-// Inject global @property defs into document <head>
-const globalStyles = document.createElement("style");
-globalStyles.textContent = tailwindStyles.slice(propertyIndex);
-document.head.appendChild(globalStyles);
+  constructor() {
+    super();
+    this.shadow = this.attachShadow({ mode: "open" });
+  }
 
-// Set up host container + Shadow DOM
-const container = document.createElement("div");
-container.id = "dataviz-host";
-document.documentElement.appendChild(container);
-const shadowRoot = container.attachShadow({ mode: "open" });
+  connectedCallback() {
+    this.shadow.adoptedStyleSheets = createShadowSheets();
 
-// Create constructable stylesheets for Shadow DOM
-const tailwindSheet = new CSSStyleSheet();
-tailwindSheet.replaceSync(tailwindStyles.slice(0, propertyIndex));
+    createRoot(this.shadow).render(
+      <StrictMode>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </StrictMode>,
+    );
+  }
+}
 
-const customSheet = new CSSStyleSheet();
-customSheet.replaceSync(customStyles);
+customElements.define("datavis-decomposer", DataVisDecomposer);
 
-shadowRoot.adoptedStyleSheets = [tailwindSheet, customSheet];
+const app = document.createElement("datavis-decomposer");
+document.documentElement.appendChild(app);
 
-// Mount React app into Shadow DOM
-createRoot(shadowRoot).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-);
+// Listen for messages from background script
+chrome.runtime.onMessage.addListener((message) => {
+  if (message.type === "SHOW_ICONS") {
+    window.postMessage(
+      { source: "datavis-decomposer", action: "show-icons" },
+      "*",
+    );
+  }
+});

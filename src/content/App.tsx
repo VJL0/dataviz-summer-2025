@@ -1,16 +1,54 @@
 import { useState } from "react";
-import Login from "@/content/components/Login";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
+import { fetchCurriculumByChartId } from "./features/curriculums/curriculumsThunks";
+import { setSelectedChartId } from "./features/ui/uiSlice";
+import { markChartVisited } from "./features/visited/visitedSlice";
+import FloatingIconManager from "./components/FloatingIconManager";
+import Results from "./components/Results";
+import SurveyLogin from "./components/SurveyLogin";
 
-function App() {
-  const [show, setShow] = useState(false);
-  const toggle = () => setShow(!show);
+type ChartMeta = {
+  id: string;
+  element: Element;
+};
+
+const App = () => {
+  const dispatch = useAppDispatch();
+  const selectedChartId = useAppSelector((state) => state.ui.selection.chartId);
+  const visitedCharts = useAppSelector((state) => state.visited.byChartId);
+
+  const [charts, setCharts] = useState<ChartMeta[]>([]);
+
+  const handleIconClick = (id: string) => {
+    if (!visitedCharts[id]) {
+      dispatch(fetchCurriculumByChartId(id));
+      dispatch(markChartVisited(id));
+    }
+
+    dispatch(setSelectedChartId(id));
+  };
 
   return (
-    <div className="fixed bottom-0 right-0 z-[100] m-5 flex select-none items-end leading-[1em]">
-      {show && <Login />}
-      <button className="toggle-button" onClick={toggle}></button>
-    </div>
+    <>
+      {selectedChartId ? (
+        <div
+          style={{
+            position: "relative",
+            zIndex: 2147483646,
+          }}
+        >
+          <Results selectedChartId={selectedChartId} />
+        </div>
+      ) : (
+        <FloatingIconManager
+          charts={charts}
+          setCharts={setCharts}
+          onIconClick={handleIconClick}
+        />
+      )}
+      <SurveyLogin />
+    </>
   );
-}
+};
 
 export default App;
