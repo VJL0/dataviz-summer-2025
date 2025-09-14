@@ -1,0 +1,36 @@
+.floating-panel-wrapper {
+  position: absolute;
+  left: 0;
+  top: 0;
+  border: 1px solid #ccc;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  user-select: none;
+  z-index: 2147483647;
+}
+
+.floating-panel-header {
+  cursor: move;
+  background: #eee;
+  padding: 8px 12px;
+  font-weight: bold;
+}
+
+.floating-panel-content {
+  padding: 12px;
+}
+
+.floating-panel-resizerx {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 100%;
+  cursor: ew-resize;
+  background-color: transparent;
+}
+
+/* Optional hover affordance */
+.floating-panel-resizerx:hover {
+  background-color: #ddd;
+}

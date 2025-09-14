@@ -21,13 +21,20 @@ export default defineManifest({
   permissions: ["scripting", "storage", "tabs"],
   host_permissions: ["*://*/*"],
   background: {
-    service_worker: "src/background/main.ts",
+    service_worker: "src/background.ts",
     type: "module",
   },
   content_scripts: [
     {
       matches: ["*://www.nytimes.com/*"], // ["*://*/*"],
-      js: ["src/content/main.tsx"],
+      js: ["src/main.tsx"],
+      run_at: "document_idle",
+    },
+  ],
+  web_accessible_resources: [
+    {
+      resources: ["icon-48.png"],
+      matches: ["*://*/*"],
     },
   ],
 });
